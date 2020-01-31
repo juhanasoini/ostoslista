@@ -90,8 +90,8 @@ export default Vue.component('shoppinglist', {
   			<div class="mr-auto">
   				<shoppinglistList v-bind:list=shoppingList @add-item="handleItemAdd" @remove-list-item="handleItemRemove"  />
 			</div>
-			<div div class="">
-				<b-list-group>
+			<div class="">
+				<b-list-group class="shoppinglist-user-lists">
 				  <b-list-group-item class="d-flex justify-content-between align-items-center" v-for="(list, index) in shoppingLists" v-bind:key="list.id">
 				    <a v-on:click="chooseList( list.id )">{{list.name}}</a>
 				    <b-badge class="ml-3" variant="primary" pill>{{ list.items.length }}</b-badge>

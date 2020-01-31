@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import './assets/stylesheets/theme.min.css'
 import './assets/stylesheets/styles.css'
+import './registerServiceWorker'
 
 Vue.use(BootstrapVue)
 

@@ -30,3 +30,7 @@ button:hover, button:active, button:focus {
 .shoppinglist-list .list-item button.list-item-done-toggle {
 	color: #57D529;
 }
+
+.shoppinglist-user-lists a {
+	cursor: pointer;
+}

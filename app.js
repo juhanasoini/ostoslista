@@ -9,6 +9,8 @@ const bodyParser = require('body-parser');
 const app = express();
 
 require('./models/user.model');
+mongoose.Promise = global.Promise;
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true,  useUnifiedTopology: true,  useFindAndModify: false  } || null);
 
 app.use( bodyParser.urlencoded( {
 	extended: true
@@ -23,6 +25,18 @@ app.use( bodyParser.urlencoded( {
 // }
 
 // app.use(corsConfig);
+
+app.use((req, res, next) => {
+  const now = new Date();
+  const time = `${now.toLocaleDateString()} - ${now.toLocaleTimeString()}`;
+  const path = `"${req.method} ${req.path}"`;
+  const m = `${req.ip} - ${time} - ${path}`;
+  // eslint-disable-next-line no-console
+  if( process.env.ENV == 'DEV' )
+    console.log(m);
+  
+  next();
+});
 
 app.use( session( {
 	secret: 'kjf&/(),jhdsfpius98ersfk(/&()',

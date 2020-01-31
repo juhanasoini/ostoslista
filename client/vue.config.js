@@ -11,10 +11,11 @@ module.exports = {
   configureWebpack:{
   }, 
   devServer:{
-    host: 'localhost',
+    host: 'node.local',
     allowedHosts: [
 		'.local'
     ],
+    // public: true,
     // hot:true,
     // port: 8000,  
     // open: 'Chrome',
@@ -24,11 +25,12 @@ module.exports = {
         secure: false,
         ws: false,
       },
-      '/sockjs-node/': { //web sockets
+      '/sockjs-node/*': { //web sockets
         target: 'http://localhost:8001',
         secure: false,
         ws: true
       },
+      // public: true
       // '/ws/': { //web sockets
       //   target: 'http://localhost:8001',
       //   secure: false,

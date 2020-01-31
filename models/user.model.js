@@ -1,6 +1,8 @@
 //https://thinkster.io/tutorials/node-json-api/creating-the-user-model
 
 var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+
 const { Schema } = mongoose;
 
 var UserSchema = new Schema({
@@ -21,6 +23,6 @@ var UserSchema = new Schema({
 	salt: String
 }, {timestamps: true});
 
-const user = mongoose.model('User', UserSchema);
+const userModel = mongoose.model('User', UserSchema);
 
-module.exports = user;
+module.exports = userModel;
