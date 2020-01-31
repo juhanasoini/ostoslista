@@ -1,0 +1,32 @@
+.navbar .nav-link {
+	border: none;
+}
+
+button {
+    border: none;
+    background-color: transparent;
+}
+
+button:hover, button:active, button:focus {
+	outline: 0;
+}
+
+.shoppinglist-list li {
+	position: relative;
+}
+.shoppinglist-list li .tools {
+	position: absolute;
+	display: inline-block;
+	top: 0;
+	right: 0;
+}
+.shoppinglist-list li.done{
+	text-decoration: line-through;
+}
+
+.shoppinglist-list .list-item button.list-item-done {
+
+}
+.shoppinglist-list .list-item button.list-item-done-toggle {
+	color: #57D529;
+}
