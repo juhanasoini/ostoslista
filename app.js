@@ -54,6 +54,15 @@ app.use( '/api' , ( req, res, next ) =>{
 	return res.status(404).json( { 'error': true } );
 } );
 
+if (process.env.ENV === 'PROD') {
+  app.use(express.static('client/dist'));
+
+  const path = require('path');
+  app.get('*', (req,res) => {
+      res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'))
+  });
+}
+
 app.listen(PORT, () => {
   console.log(`app running on port ${PORT}`)
 });
