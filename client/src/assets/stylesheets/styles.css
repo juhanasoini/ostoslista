@@ -2,6 +2,38 @@
 	border: none;
 }
 
+.loader-container {
+	position: relative;
+}
+
+.loader-container.curtain{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba( 0,0,0,0.5);
+	z-index: 100;
+}
+.loader-container.curtain .loader-content {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translateX( -50% ) translateY(-50%);
+	color: #fff;
+}
+
+.loader-container.curtain span {
+	display: block;
+	text-align: center;
+}
+
+
+.error-list li:last-child,
+.error-list ul {
+	margin-bottom: 0;
+}
+
 button {
     border: none;
     background-color: transparent;
@@ -30,7 +62,34 @@ button:hover, button:active, button:focus {
 .shoppinglist-list .list-item button.list-item-done-toggle {
 	color: #57D529;
 }
+@keyframes glowing {
+	0% { 
+		box-shadow: 0 0 -10px #c4a300; 
+		background-color: #c4a300;
+	}
+	40% { 
+		box-shadow: 0 0 20px #c4a300;
+		background-color: #c4a300;
+ 	}
+	60% { 
+		box-shadow: 0 0 20px #c4a300;
+		background-color: #c4a300;
+	}
+	100% { 
+		box-shadow: 0 0 -10px #c4a300;
+		background-color: #c4a300;
+	}
+}
+
+.shoppinglist-list .list-item.exists {
+	animation: glowing 1500ms infinite;
+
+}
 
 .shoppinglist-user-lists a {
 	cursor: pointer;
+}
+
+button:disabled .fas {
+	visibility: hidden;
 }
