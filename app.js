@@ -48,8 +48,7 @@ app.use( session( {
 		maxAge: 1000000
 	}
 }));
-
-if( process.env.ENV === 'PROD' )
+if( process.env.ENV === 'PROD' && process.env.DO_REDIRECT == "true" )
 {
 	app.use (function (req, res, next) {
     	if( req.protocol === 'https' || req.headers.host == 'node.local' )
