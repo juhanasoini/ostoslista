@@ -142,7 +142,16 @@ export default  Vue.component('shoppinglistList', {
 		  	<div v-if="!edit" class="card bg-primary text-white">
 		        <div class="card-header">
 		            <template v-if="list">
-		            {{list.name}}<b-button class="ml-2 btn-sm btn-success float-right" v-on:click="toggleEdit" title="Muokkaa listaa"><i class="fas fa-edit"></i></b-button>
+		            {{list.name}}
+		            <b-button class="ml-2 btn-sm btn-success float-right d-none d-lg-block" v-on:click="toggleEdit" title="Muokkaa listaa"><i class="fas fa-edit"></i></b-button>
+		        	<b-dropdown class="float-right d-lg-none" variant="primary" size="sm" no-caret right>
+				    <template v-slot:button-content>
+				      <i class="fas fa-ellipsis-v"></i>
+				    </template>
+				    <b-dropdown-item-button variant="success" class="text-center" v-on:click="toggleEdit" title="Muokkaa listaa" size="sm"><i class="fas fa-edit"></i></b-dropdown-item-button>
+				    <b-dropdown-divider></b-dropdown-divider>
+				    <b-dropdown-item href="#">...</b-dropdown-item>
+				  </b-dropdown>
 		            </template>
 		        </div>
 		        <div class="card-body">
@@ -163,7 +172,7 @@ export default  Vue.component('shoppinglistList', {
 		        </div>
 		        <div class="card-footer">
 		        	<form class="form-inline" v-on:submit.prevent>
-		            	<input class="form-control shoppinglist-new-item-field" type="text" v-model="message" v-on:keyup.enter="add" placeholder="Lisää listalle" autofocus /><b-button class="ml-2" variant="primary" v-on:click="add"><i class="fas fa-plus-circle"></i></b-button>
+		            	<input class="form-control shoppinglist-new-item-field " type="text" v-model="message" v-on:keyup.enter="add" placeholder="Lisää listalle" autofocus /><b-button class="ml-2" variant="primary" v-on:click="add"><i class="fas fa-plus-circle"></i></b-button>
 		        	</form>
 		        </div>
 		    </div>
