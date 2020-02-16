@@ -90,6 +90,15 @@ button:hover, button:active, button:focus {
 	cursor: pointer;
 }
 
-button:disabled .fas {
-	visibility: hidden;
+.btn:disabled {
+	/*visibility: hidden;*/
+	opacity: 0.3;
+}
+.btn:disabled:hover {
+	border-color: transparent;
+
+}
+
+.shoppinglist-new-item-field {
+	width: auto !important;
 }

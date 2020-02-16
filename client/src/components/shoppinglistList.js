@@ -12,7 +12,8 @@ export default  Vue.component('shoppinglistList', {
 	  		prevName: '',
 	  		nameUpdated: false,
 	  		allRemoveDisabled: true,
-	  		existsID: null
+	  		existsID: null,
+	  		newListName: ''
 		}
 	},
 	created: function() {
@@ -101,9 +102,15 @@ export default  Vue.component('shoppinglistList', {
 			event.preventDefault();
 			this.edit = !this.edit;
 			if( this.edit  )
+			{
+				this.newListName = this.list.name.valueOf();
 				this.prevName = this.list.name;
+			}
 			else
+			{
+				this.newListName = '';
 				this.list.name = this.prevName;
+			}
         },
         removeList: function( event ) {
 			event.preventDefault();
@@ -119,7 +126,9 @@ export default  Vue.component('shoppinglistList', {
         },
         updateListName:  async function( event ) {
         	event.preventDefault();
-        	await axios.put( '/api/list/name', {_id: this.list._id, name: this.list.name} )
+        	if( this.newListName.trim() == '' )
+        		return false;
+        	await axios.put( '/api/list/name', {_id: this.list._id, name: this.newListName} )
         	.then( res => {
         		return res;
         	} )
@@ -154,14 +163,14 @@ export default  Vue.component('shoppinglistList', {
 		        </div>
 		        <div class="card-footer">
 		        	<form class="form-inline" v-on:submit.prevent>
-		            	<input class="form-control" type="text" v-model="message" v-on:keyup.enter="add" placeholder="Lisää listalle" autofocus /><b-button class="ml-2" variant="primary" v-on:click="add"><i class="fas fa-plus-circle"></i></b-button>
+		            	<input class="form-control shoppinglist-new-item-field" type="text" v-model="message" v-on:keyup.enter="add" placeholder="Lisää listalle" autofocus /><b-button class="ml-2" variant="primary" v-on:click="add"><i class="fas fa-plus-circle"></i></b-button>
 		        	</form>
 		        </div>
 		    </div>
 		    <div v-if="edit" class="card bg-primary text-white">
 		        <div class="card-header form-inline">
-		            <input class="form-control form-control-sm" type="text" v-model="list.name">
-		            <b-button class="ml-2 btn-sm" variant="success" title="Tallenna nimi" v-on:click="updateListName" v-bind:disabled="prevName == list.name"><i class="fas fa-check"></i></b-button>
+		            <input class="form-control form-control-sm" type="text" v-model="newListName">
+		            <b-button class="ml-2 btn-sm" variant="success" title="Tallenna nimi" v-on:click="updateListName" v-bind:disabled="newListName == list.name"><i class="fas fa-check"></i></b-button>
 		        </div>
 		        <div class="card-body">
 		        	<b-button class="ml-2 btn-sm" variant="danger" v-on:click="removeList" title="Sulje muokkaus"><i class="fas fa-trash-alt"></i> Poista lista</b-button>

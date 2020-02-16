@@ -13,7 +13,8 @@ var ShoppingListSchema = new Schema({
 	owner: {
 		type: mongoose.Schema.Types.ObjectId, 
 		ref: 'User',
-		index: true 
+		index: true,
+		required: true
 	},
 	shared_with: [{
 		type: mongoose.Schema.Types.ObjectId, 

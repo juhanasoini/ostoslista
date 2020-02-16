@@ -48,7 +48,7 @@ export default Vue.component('Login', {
 			        })
 			        .then(res => res.json() )
 			        .then( ( data ) => {
-			        	if( data.length )
+			        	if( data.length && data[0].message != 'success' )
 			        	{
 				        	data.forEach( function( value, index ){
 								Vue.set( __.errors, index, {message: value.message } );
@@ -70,11 +70,11 @@ export default Vue.component('Login', {
         	<div className="flex-row">
         		<b-card header="Kirjaudu sisään" header-tag="h3" class="mx-3">
         			<errors v-bind:error=errors />
-        			<loading v-if="loading" text="Lataa" v-bind:wrapper=true />
+        			<loading v-if="loading" text="Kirjaudutaan sisään" v-bind:wrapper=true />
 				    <b-form inline v-on:submit.prevent="submitForm">
-					    <b-input id="inline-form-input-name" class="mb-2 mr-sm-2 mb-sm-0" placeholder="Käyttäjänimi" v-model="userName"></b-input>					    
-					    <b-input id="inline-form-input-username" placeholder="Salasana" type="password" v-model="password"></b-input>
-					    <b-button variant="primary" type="submit">Kirjaudu</b-button>
+					    <b-input class="mb-2 mr-sm-2 mb-sm-0" placeholder="Käyttäjänimi" v-model="userName"></b-input>					    
+					    <b-input placeholder="Salasana" type="password" class="mb-2 mb-sm-0 mr-sm-2" v-model="password"></b-input>
+					    <b-button variant="primary" type="submit" class="ml-auto">Kirjaudu</b-button>
 				  	</b-form>
 				  	<template v-slot:footer>
 				        Eikö sinulla ole vielä tiliä? Rekisteröidy <router-link :to="{ name: 'register'}">tästä</router-link>

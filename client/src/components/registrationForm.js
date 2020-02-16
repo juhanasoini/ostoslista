@@ -101,7 +101,7 @@ export default Vue.component('registrationForm', {
 	},
 	template: `
 		<div class="d-flex align-items-center justify-content-center" style="height: 100vh">
-        	<div class="flex-row w-50">
+        	<div class="flex-row">
         		<b-card header="Rekisteröidy" header-tag="h3" class="mx-3">
         			<errors v-bind:error=errors />
         			<loading v-if="loading" text="Lataa" v-bind:wrapper=true />
