@@ -5,7 +5,6 @@
   "main": "app.js",
   "scripts": {
     "client": "npm run serve --prefix client",
-    "build": "npm run build --prefix client",
     "server": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
