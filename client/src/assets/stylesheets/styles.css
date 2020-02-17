@@ -99,6 +99,10 @@ button:hover, button:active, button:focus {
 
 }
 
-.shoppinglist-new-item-field {
+.shoppinglist-user-lists .list-group-item {
+	cursor: pointer;
+}
+
+.shoppinglist-input-auto {
 	width: auto !important;
 }

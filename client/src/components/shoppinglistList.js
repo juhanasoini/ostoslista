@@ -172,13 +172,13 @@ export default  Vue.component('shoppinglistList', {
 		        </div>
 		        <div class="card-footer">
 		        	<form class="form-inline" v-on:submit.prevent>
-		            	<input class="form-control shoppinglist-new-item-field " type="text" v-model="message" v-on:keyup.enter="add" placeholder="Lisää listalle" autofocus /><b-button class="ml-2" variant="primary" v-on:click="add"><i class="fas fa-plus-circle"></i></b-button>
+		            	<input class="form-control shoppinglist-input-auto" type="text" v-model="message" v-on:keyup.enter="add" placeholder="Lisää listalle" autofocus /><b-button class="ml-2" variant="primary" v-on:click="add"><i class="fas fa-plus-circle"></i></b-button>
 		        	</form>
 		        </div>
 		    </div>
 		    <div v-if="edit" class="card bg-primary text-white">
 		        <div class="card-header form-inline">
-		            <input class="form-control form-control-sm" type="text" v-model="newListName">
+		            <input class="form-control form-control-sm shoppinglist-input-auto" type="text" v-model="newListName">
 		            <b-button class="ml-2 btn-sm" variant="success" title="Tallenna nimi" v-on:click="updateListName" v-bind:disabled="newListName == list.name"><i class="fas fa-check"></i></b-button>
 		        </div>
 		        <div class="card-body">
@@ -187,7 +187,7 @@ export default  Vue.component('shoppinglistList', {
 		        	<h4>Jaa lista</h4>
 		        	<small class="text-info mb-2 d-block">Voit jakaa listan sellaisen henkilön kanssa joka on myös rekisteröitynyt tähän palveluun</small>
 		        	<form class="form-inline">
-		        		<input class="form-control form-control-sm" type="email" placeholder="Anna sähköpostiosoite">
+		        		<input class="form-control form-control-sm shoppinglist-input-auto" type="email" placeholder="Anna sähköpostiosoite">
 		            	<b-button class="ml-2 btn-sm" variant="success" title="Jaa lista"><i class="fas fa-share-square" ></i></b-button>
 		            </form>
 		        </div>

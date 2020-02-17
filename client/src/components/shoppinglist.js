@@ -79,8 +79,8 @@ export default Vue.component('shoppinglist', {
 			<div class="d-none d-lg-block col-sm-3">
 				<div>
 					<b-list-group class="shoppinglist-user-lists">
-					  <b-list-group-item class="d-flex justify-content-between align-items-center" v-for="(list, index) in shoppingLists" v-bind:key="list.id">
-					    <a v-on:click="chooseList( list._id )">{{list.name}}</a>
+					  <b-list-group-item v-on:click="chooseList( list._id )" class="d-flex justify-content-between align-items-center" v-for="(list, index) in shoppingLists" v-bind:key="list.id">
+					    <a>{{list.name}}</a>
 					    <b-badge v-if="list.items" class="ml-3" variant="primary" pill>{{ list.items.length }}</b-badge>
 					  </b-list-group-item>
 					</b-list-group>
