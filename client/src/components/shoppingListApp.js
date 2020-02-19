@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+///https://github.hubspot.com/offline/
 import { BootstrapVue } from 'bootstrap-vue'
 import shoppinglist from './shoppinglist'
 import axios from 'axios'
@@ -31,27 +31,11 @@ export default Vue.component('shoppinglistapp', {
             await axios.get( '/api/user/currentuser' )
             .then( function ( response ) {
                 __.user = response.data;
-                Vue.set( __.user, 'lists', response.data.lists )
-                console.log(__.user);
+                Vue.set( __.user, 'lists', response.data.lists );
             })
             .catch( function( error ) {
                 console.log(error);
             })
-            // await fetch('/api/user/currentuser', {
-            //     method: 'GET',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // })
-            // .then(res => {
-            //     if( res.status === 200 )                
-            //         return res;
-            // })
-            // .then( res => res.json() )
-            // .then( ( user ) => {
-            //     this.user = user;
-            //     console.log(this.user)
-            // } );
         },
     },
 

@@ -6,5 +6,6 @@ const list_controller = require('../controllers/list.controller');
 router.post( '/list', is_logged_handler, list_controller.newList );
 router.put( '/list/name', is_logged_handler, list_controller.updateListName );
 router.put( '/list/items', is_logged_handler, list_controller.updateList );
+router.delete( '/list/:listid', is_logged_handler, list_controller.deleteList );
 
 module.exports = router;

@@ -13,11 +13,20 @@ export default  Vue.component('shoppinglistList', {
 	  		nameUpdated: false,
 	  		allRemoveDisabled: true,
 	  		existsID: null,
-	  		newListName: ''
+	  		newListName: '',
+	  		loading: false
 		}
 	},
 	created: function() {
 		this.$emit('List-list created');
+	},
+	watch: {
+	    list(newValue, oldValue) {
+	    	let __ = this;
+	    	__.edit = false;
+	    	__.newListName = '';
+	    	__.prevName = '';
+	    }
 	},
 	methods: {
 		add: function( event ) {
@@ -82,6 +91,7 @@ export default  Vue.component('shoppinglistList', {
 				this.allRemoveDisabled = false;
         },
         removeDone: async function() {
+        	let __ = this;
         	this.list.items.forEach( function( element, i ){
 
         	});
@@ -93,30 +103,51 @@ export default  Vue.component('shoppinglistList', {
 			}
 
 			await this.updateList()
-			.then( res => console.log( res ) )
+			.then( res => {
+				console.log( res ) 
+				__.toggleRemoveAllDone()
+			})
 			.catch( err => {
         		console.error( err );
         	} );
         },
         toggleEdit: function( event ) {
 			event.preventDefault();
-			this.edit = !this.edit;
-			if( this.edit  )
+			let __ = this;
+			__.edit = !__.edit;
+			if( __.edit  )
 			{
-				this.newListName = this.list.name.valueOf();
-				this.prevName = this.list.name;
+				__.newListName = __.list.name.valueOf();
+				__.prevName = __.list.name;
 			}
 			else
 			{
-				this.newListName = '';
-				this.list.name = this.prevName;
+				__.newListName = '';
+				__.list.name = __.prevName;
 			}
         },
-        removeList: function( event ) {
+        removeList: async function( event ) {
 			event.preventDefault();
-			if( confirm( `Haluatko varmasti poistaa listan: ${this.list.name}` ) )
+			let __ = this;
+			let listID = __.list._id;
+			let listName = __.list.name;
+			if( confirm( `Haluatko varmasti poistaa listan: ${listName}` ) )
 			{
-				console.log(this.list);
+				__.loading = true;
+	        	await axios.delete( '/api/list/'+listID )
+	        	.then( res => {
+
+					__.$emit('list-removed', listID );
+					__.loading = false;
+	        	} )
+	        	.catch( err => {
+	        		if( err.response.status == 401 )
+	        			return this.$router.push( { name: "login"} );
+
+        		console.log( err.response );
+	        		console.error( err );
+	        		__.loading = false;
+	        	} );
 			}
         },
         updateList: async function() {
@@ -125,21 +156,24 @@ export default  Vue.component('shoppinglistList', {
         	return await axios.put( '/api/list/items', __.list );
         },
         updateListName:  async function( event ) {
+        	let __ = this;
         	event.preventDefault();
-        	if( this.newListName.trim() == '' )
+        	if( __.newListName.trim() == '' )
         		return false;
-        	await axios.put( '/api/list/name', {_id: this.list._id, name: this.newListName} )
+        	await axios.put( '/api/list/name', {_id: __.list._id, name: __.newListName} )
         	.then( res => {
-        		return res;
+        		Vue.set( __.list, 'name', res.data.name );
         	} )
         	.catch( err => {
-        		console.error( err )
+        		if( err.response.status == 401 )
+        			return this.$router.push( { name: "login"} );
+        		console.error( err );
         	} );
         }
 	},
   	template: `
   		<div>
-		  	<div v-if="!edit" class="card bg-primary text-white">
+		  	<div v-if="!edit && list" class="card bg-primary text-white">
 		        <div class="card-header">
 		            <template v-if="list">
 		            {{list.name}}
@@ -155,8 +189,8 @@ export default  Vue.component('shoppinglistList', {
 		            </template>
 		        </div>
 		        <div class="card-body">
-		    		<loading v-if="!list" text="Lataillaan" />
-		            <ol class="shoppinglist-list" v-if="list">
+		    		<loading v-if="!list" text="Lataillaan" v-bind:wrapper=true />
+		            <ol class="shoppinglist-list" v-if="list.items.length > 0">
 		                <shoppinglistListItem 
 		                	v-for="item in list.items" 
 		                	v-bind:key=item.uniqid 
@@ -168,6 +202,9 @@ export default  Vue.component('shoppinglistList', {
 		                	@reset-existingID="existsID = null"
 		                	v-on="$listeners" />
 		            </ol>
+		            <div v-else class="alert alert-secondary" role="alert">
+						Listalla ei ole vielä kohteita.
+					</div>
 		            <button v-on:click="removeDone" class="btn btn-warning btn-sm float-right" v-bind:disabled="allRemoveDisabled" title="Poista valmiit"><i class="fas fa-trash-alt"></i></button>
 		        </div>
 		        <div class="card-footer">
@@ -182,6 +219,7 @@ export default  Vue.component('shoppinglistList', {
 		            <b-button class="ml-2 btn-sm" variant="success" title="Tallenna nimi" v-on:click="updateListName" v-bind:disabled="newListName == list.name"><i class="fas fa-check"></i></b-button>
 		        </div>
 		        <div class="card-body">
+		        	<loading v-if="loading" text="" v-bind:wrapper=true />
 		        	<b-button class="ml-2 btn-sm" variant="danger" v-on:click="removeList" title="Sulje muokkaus"><i class="fas fa-trash-alt"></i> Poista lista</b-button>
 		        	<hr>
 		        	<h4>Jaa lista</h4>

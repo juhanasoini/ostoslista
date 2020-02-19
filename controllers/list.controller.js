@@ -6,7 +6,7 @@ const user_controller = require('./user.controller');
 module.exports.newList = async function( req, res, next ){
 	let body = req.body;
 	try{
-		let ownerID = req.session.user.id
+		let ownerID = req.user.id
 		let list = new listModel( {
 			name: body.name,
 			owner: ownerID} );
@@ -20,16 +20,7 @@ module.exports.newList = async function( req, res, next ){
 
   				user.lists.push( list );
   				user.save();
-  				console.log(user);
   			});
-
-      // 		listModel.findOne(list).populate('owner').exec(function (err, list) {
-      // 			let user = list.owner;
-
-      // 			user.lists.push( list );
-      // 			user.save();
-		    //     console.log( user );
-		    // });
 
       		return res.status( 200 ).json( list );
 		} )
@@ -68,4 +59,39 @@ module.exports.updateListName = function( req, res, next ){
 	}
 
 	return res.status(400);
+}
+module.exports.deleteList = async function( req, res, next ){
+	let params = req.params;
+	try{
+		let listID = params.listid;
+		let ownerID = req.user.id;
+		let list = await listModel.findById( listID );
+		if( list.owner == ownerID )
+		{
+			await userModel.findById( list.owner, function( err, user ){
+				if( err )
+					return res.status( 400 ).json( err.errors); 
+
+				let index = user.lists.indexOf(listID);
+				if( index != -1  )
+				{
+					user.lists.splice( index, 1 );
+					user.save( function( err, user ){
+						listModel.findByIdAndDelete( listID, function (err) {
+							if(err) 
+								return res.status( 400 ).json( err.errors); 
+
+							return res.status( 200 ).json( {'success': 'List removed'} );						  
+						});
+					});
+				}
+			});
+		}
+		else
+			return res.status( 400 ).json( { 'error': `User not allowed to remove list ID ${listID}` } ); 
+
+	
+	} catch( err ) {
+		console.error( err );
+	}
 }

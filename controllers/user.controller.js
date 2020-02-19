@@ -29,8 +29,7 @@ module.exports.userRegister = async ( req, res, next ) => {
 }
 
 module.exports.currentUser = ( req, res, next ) => {
-	let id = req.session.user.id;
-	// let user = userModel.findById( id, { lean: true } );
+	let id = req.user._id;
 	userModel.findById( id )
 		.select('username email lists -_id')
 		.populate('lists')

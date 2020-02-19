@@ -5,7 +5,7 @@
   "display": "standalone",
   "background_color": "#272B30",
   "theme_color": "#272B30",
-  "description": "A simple shopping list",
+  "description": "A simple list app",
   "icons": [{
     "src": "/img/icons/android-icon-48x48.png",
     "sizes": "48x48",

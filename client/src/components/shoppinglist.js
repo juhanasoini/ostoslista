@@ -20,13 +20,15 @@ export default Vue.component('shoppinglist', {
             itemList: [
             ],
             showNewListForm: false,
-            newListName: ''
+            newListName: '',
+            newListLoading: false
 		}
 	},
 	watch: {
 	    lists(newValue, oldValue) {
 	    	this.shoppingLists = newValue;
-			this.shoppingList = this.shoppingLists[0];
+	    	if( this.shoppingList === null )
+				this.shoppingList = this.shoppingLists[0];
 	    }
 	},
 	created: function() {
@@ -60,26 +62,50 @@ export default Vue.component('shoppinglist', {
         	if( __.newListName.trim() == '' )
         		return false;
 
+        	__.newListLoading = true;
         	await axios.post( '/api/list', {name: this.newListName} )
         	.then( list => {
         		__.shoppingLists.push( list.data );
+        		__.toggleAddNewList();
+
+        		__.chooseList( list.data._id );
+
+        		__.newListLoading = false;
         	} )
         	.catch( err => {
-        		console.error( err )
+        		console.error( err );
+        		__.newListLoading = false;
         	} );
+		},
+		removeList: function( listID )
+		{
+			let __ = this;
+			let index = -1;
+			__.shoppingLists.forEach( function( e, i ){
+				if( e._id == listID )
+					index = i;
+			});
 
+			if( index != -1 )
+			{
+				__.shoppingLists.splice( index, 1 );
+				if( __.shoppingLists.length > 0 )
+					__.chooseList( __.shoppingLists[0]._id );
+				else
+					__.shoppingList = null;
+			}
 		}
         
     },
   	template: `
   		<div class="row">
   			<div class="col-sm-12 col-lg-6">
-  				<shoppinglistList v-bind:list=shoppingList @add-item="handleItemAdd"  />
+  				<shoppinglistList v-bind:list=shoppingList @add-item="handleItemAdd" @list-removed="removeList"  />
 			</div>
 			<div class="d-none d-lg-block col-sm-3">
 				<div>
 					<b-list-group class="shoppinglist-user-lists">
-					  <b-list-group-item v-on:click="chooseList( list._id )" class="d-flex justify-content-between align-items-center" v-for="(list, index) in shoppingLists" v-bind:key="list.id">
+					  <b-list-group-item v-on:click="chooseList( list._id )" class="d-flex justify-content-between align-items-center" v-for="(list, index) in shoppingLists" v-bind:key="list.id" v-bind:class="{ 'bg-warning text-primary': list._id==shoppingList._id }">
 					    <a>{{list.name}}</a>
 					    <b-badge v-if="list.items" class="ml-3" variant="primary" pill>{{ list.items.length }}</b-badge>
 					  </b-list-group-item>
@@ -87,7 +113,8 @@ export default Vue.component('shoppinglist', {
 					<div>
 						<b-button v-if="!showNewListForm" class="float-right" size="sm" variant="success" v-on:click="toggleAddNewList" title="Lisää lista"><i class="fas fa-plus"></i></b-button>
 						<b-input-group v-if="showNewListForm" class="mb-3" size="sm">
-							<b-form-input placeholder="Listan nimi" v-model="newListName"></b-form-input>
+							<loading v-if="newListLoading" text="" v-bind:wrapper=true />
+							<b-form-input placeholder="Listan nimi" v-model="newListName" v-on:keyup.enter="addNewList"></b-form-input>
 							<b-input-group-append>
 								<b-button size="sm" variant="success" v-on:click="addNewList" title="Tallenna"><i class="fas fa-check"></i></b-button>
 								<b-button size="sm" variant="warning" v-on:click="toggleAddNewList" title="Peruuta"><i class="fas fa-undo"></i></b-button>

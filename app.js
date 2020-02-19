@@ -1,12 +1,14 @@
 require('dotenv').config();
-
+//https://medium.com/@basics.aki/step-wise-tutorial-for-node-js-authentication-using-passport-js-and-jwt-using-apis-cfbf274ae522
 const PORT = process.env.ENV === 'PROD' ? process.env.PORT : process.env.DEV_PORT || 8001;
 const express = require('express');
 const session = require('express-session');
+const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const {is_logged_handler} = require( './lib/isLoggedIn' );
-
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const app = express();
 
 require('./models/user.model');
@@ -14,6 +16,7 @@ require('./models/shoppinglist.model');
 mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true,  useUnifiedTopology: true,  useFindAndModify: false  } || null);
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // const corsConfig = function(req, res, next) {
@@ -40,6 +43,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(cookieParser());
 app.use( session( {
 	secret: 'kjf&/(),jhdsfpius98ersfk(/&()',
 	resave: true,
@@ -48,13 +52,48 @@ app.use( session( {
 		maxAge: 1000000
 	}
 }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+const userModel = mongoose.model('User');
+passport.use( new LocalStrategy(
+    {
+        usernameField: 'userName',
+        passwordField: 'password'
+    },
+    function(username, password, done) {
+        userModel.findOne( { username: username }, function( err, user ) {
+            if( err )
+                return done( err );
+            if( !user )
+                return done( null, false, { message: 'Käyttäjänimi tai salasana väärin!' } );
+            
+        
+            if( !user.validPassword( password ) )
+                return done( null, false, { message: 'Käyttäjänimi tai salasana väärin!' } );
+            
+            return done( null, user );
+        });
+    }
+));
+passport.serializeUser(function(user, done) {
+  done(null, user._id);
+});
+
+passport.deserializeUser(function(id, done) {
+  userModel.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+
 if( process.env.ENV === 'PROD' && process.env.DO_REDIRECT == "true" )
 {
 	app.use (function (req, res, next) {
     	if( req.protocol === 'https' || req.headers.host == 'node.local' )
         	next();
     	else
-    		res.redirect('https://' + req.headers.host + req.url);
+    		return res.redirect('https://' + req.headers.host + req.url);
 	});
 }
 
@@ -67,29 +106,17 @@ if( process.env.ENV === 'PROD' && process.env.DO_REDIRECT == "true" )
 // } )
 
 app.get('/', is_logged_handler, (req, res, next) => {
-    // const user = req.user;
-    // user.populate('notes')
-    //     .execPopulate()
-    //     .then(() => {
-    //         console.log('user:', user);
-    //         let data = {
-    //             user_name: user.name,
-    //             notes: user.notes
-    //         };
-    //         let html = note_views.notes_view(data);
-    //         console.log('html:', html)
-    //         res.send();
-    //     });
     next();
 });
 
 app.use('/logout', (req, res, next) => {
     req.session.destroy();
+    req.logout();
     // next();
     return res.redirect('/login');
 });
 
-const userRoutes = require('./routes/user.routes');
+const userRoutes = require('./routes/user.routes')(app, passport);
 const listRoutes = require('./routes/list.routes');
 app.use('/api', userRoutes);
 app.use('/api', listRoutes);
