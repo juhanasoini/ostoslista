@@ -7,8 +7,8 @@ import router from '../routes'
 export default Vue.component('Login', {
 	data: function () {
 		return {
-			userName: 'jullex',
-			password: 'sistinas',
+			userName: '',
+			password: '',
 			errors: [],
 			loading: false
 		}
