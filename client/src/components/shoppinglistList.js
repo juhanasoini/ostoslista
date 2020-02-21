@@ -4,7 +4,7 @@ import shoppinglistListItem from './shoppinglistListItem'
 import axios from 'axios'
 
 export default  Vue.component('shoppinglistList', {
-	props: ['list', 'number'],
+	props: ['list', 'number', 'lists'],
 	data: function () {
 		return {
 	  		message: '',
@@ -184,7 +184,7 @@ export default  Vue.component('shoppinglistList', {
 				    </template>
 				    <b-dropdown-item-button variant="success" class="text-center" v-on:click="toggleEdit" title="Muokkaa listaa" size="sm"><i class="fas fa-edit"></i></b-dropdown-item-button>
 				    <b-dropdown-divider></b-dropdown-divider>
-				    <b-dropdown-item href="#">...</b-dropdown-item>
+				    <b-dropdown-item v-for="(lista, index) in lists" v-bind:key="lista.id" @click="$emit('change-list', lista._id)" v-bind:class="{ 'bg-warning text-primary': lista._id==list._id }">{{lista.name}}<b-badge v-if="list.items" class="ml-3" variant="primary" pill>{{ lista.items.length }}</b-badge></b-dropdown-item>
 				  </b-dropdown>
 		            </template>
 		        </div>

@@ -65,13 +65,13 @@ passport.use( new LocalStrategy(
         userModel.findOne( { username: username }, function( err, user ) {
             if( err )
                 return done( err );
+
             if( !user )
                 return done( null, false, { message: 'Käyttäjänimi tai salasana väärin!' } );
             
         
             if( !user.validPassword( password ) )
                 return done( null, false, { message: 'Käyttäjänimi tai salasana väärin!' } );
-            
             return done( null, user );
         });
     }

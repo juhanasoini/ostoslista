@@ -15,7 +15,7 @@ module.exports.userRegister = async ( req, res, next ) => {
       		return res.status( 400 ).json( err.errors)
 
 	  	let list = new listModel( {
-	  		name: 'Ostoslista 1',
+	  		name: 'Lista 1',
 	  		owner: user
 	  	});
 

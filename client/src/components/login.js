@@ -15,6 +15,7 @@ export default Vue.component('Login', {
 	},
 	methods:{
 		validateForm: function( ) {
+			let __ = this;
 			this.errors = [];
 			if( this.userName.trim() != '' && this.password.trim() != '' )
 				return true;
@@ -24,6 +25,7 @@ export default Vue.component('Login', {
 
 			if( this.password.trim() == '' )
 				this.errors.push( { field: 'password', message: 'Anna salasana' } );
+			__.loading = false;	
 
 			return false;
 		},
@@ -40,29 +42,28 @@ export default Vue.component('Login', {
 			                'Content-Type': 'application/json'
 			            }
 			        })
-			        .then(res => {
-			            if( res.status === 200 )
-			                router.push( { name: "index"} );
-			            
-			            return res;
-			        })
 			        .then(res => res.json() )
 			        .then( ( data ) => {
 			        	if( data.length && data[0].message != 'success' )
 			        	{
 				        	data.forEach( function( value, index ){
 								Vue.set( __.errors, index, {message: value.message } );
-				        	});			        		
+				        	});
+							__.loading = false;	
 			        	}
 			        })
+			        .then(res => {
+			            router.push( { name: "index"} );		                
+			        })
 			        .catch( (err) => {
-			        	console.error(err)
+			        	console.log(err)
+						__.loading = false;	
 			        } );
 				} catch( error ){
 					console.error( error );
+					__.loading = false;	
 				}
 			}
-			__.loading = false;
 		}
 	},
 	template: `

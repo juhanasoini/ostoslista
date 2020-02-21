@@ -100,7 +100,7 @@ export default Vue.component('shoppinglist', {
   	template: `
   		<div class="row">
   			<div class="col-sm-12 col-lg-6">
-  				<shoppinglistList v-bind:list=shoppingList @add-item="handleItemAdd" @list-removed="removeList"  />
+  				<shoppinglistList v-bind:list=shoppingList v-bind:lists=shoppingLists @add-item="handleItemAdd" @list-removed="removeList"  @change-list="chooseList" />
 			</div>
 			<div class="d-none d-lg-block col-sm-3">
 				<div>

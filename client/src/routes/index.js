@@ -7,10 +7,6 @@ import userService from '../user.service.js'
 
 Vue.use(Router)
 
-const Home = {
-  template: '<div>Rekkaa</div>'
-}
-
 let router = new Router({  
 	mode: 'history',
 	routes: [
