@@ -14,7 +14,7 @@ module.exports=function(app, passport) {
         if( typeof req.user != 'undefined' )
             return res.status( 200 ).json( { 'message': 'success' } );
         else
-            return res.status( 401 ).json( { 'message': 'Not authorized' } );
+            return res.status( 200 ).json( { 'error': 'Not authorized' } );
     } );
 
     router.get( '/user/currentuser', is_logged_handler, user_controller.currentUser );

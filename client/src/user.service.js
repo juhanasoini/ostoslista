@@ -1,7 +1,8 @@
+import axios from 'axios'
 export default {
     isLoggedIn: async () => {
-        let res = await fetch('/api/user/isloggedin');
-        return res.status === 200 || false;
+        let res = await axios.get('/api/user/isloggedin');
+        return typeof res.data.error === 'undefined';
     }
 
 }

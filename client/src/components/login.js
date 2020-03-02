@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import { BootstrapVue } from 'bootstrap-vue'
 import {loading, errors, sleep} from './helpers'
+import axios from 'axios'
 
 import router from '../routes'
 
@@ -35,14 +36,10 @@ export default Vue.component('Login', {
 			if( this.validateForm() )
 			{
 				try {
-					fetch('/api/user/login', {
-			            method: 'POST',
-			            body: JSON.stringify( {userName: this.userName, password: this.password }),
-			            headers: {
-			                'Content-Type': 'application/json'
-			            }
+					await axios.post('/api/user/login', {
+			            userName: this.userName, 
+			            password: this.password 
 			        })
-			        .then(res => res.json() )
 			        .then( ( data ) => {
 			        	if( data.length && data[0].message != 'success' )
 			        	{

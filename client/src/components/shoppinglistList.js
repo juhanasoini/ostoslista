@@ -14,6 +14,7 @@ export default  Vue.component('shoppinglistList', {
 	  		allRemoveDisabled: true,
 	  		existsID: null,
 	  		newListName: '',
+	  		newListLoading: false,
 	  		loading: false
 		}
 	},
@@ -169,7 +170,28 @@ export default  Vue.component('shoppinglistList', {
         			return this.$router.push( { name: "login"} );
         		console.error( err );
         	} );
-        }
+        },
+		addNewList: async function( event ) {
+			event.preventDefault();
+			let __ = this;
+        	if( __.newListName.trim() == '' )
+        		return false;
+
+        	__.newListLoading = true;
+        	await axios.post( '/api/list', {name: this.newListName} )
+        	.then( list => {
+        		__.newListName = '';
+        		// __.shoppingLists.push( list.data );
+
+        		// __.chooseList( list.data._id );
+
+        		__.newListLoading = false;
+        	} )
+        	.catch( err => {
+        		console.error( err );
+        		__.newListLoading = false;
+        	} );
+		}
 	},
   	template: `
   		<div>
@@ -184,7 +206,17 @@ export default  Vue.component('shoppinglistList', {
 				    </template>
 				    <b-dropdown-item-button variant="success" class="text-center" v-on:click="toggleEdit" title="Muokkaa listaa" size="sm"><i class="fas fa-edit"></i></b-dropdown-item-button>
 				    <b-dropdown-divider></b-dropdown-divider>
-				    <b-dropdown-item v-for="(lista, index) in lists" v-bind:key="lista.id" @click="$emit('change-list', lista._id)" v-bind:class="{ 'bg-warning text-primary': lista._id==list._id }">{{lista.name}}<b-badge v-if="list.items" class="ml-3" variant="primary" pill>{{ lista.items.length }}</b-badge></b-dropdown-item>
+				    <b-dropdown-item v-for="(lista, index) in lists" v-bind:key="lista.id" @click="$emit('change-list', lista._id)" v-bind:class="{ 'bg-warning text-light': lista._id==list._id }"><span class="d-block position-relative">{{lista.name}}<b-badge v-if="list.items" class="ml-3 position-absolute" v-bind:style="{right: '0', top: '4px'}"variant="primary" pill>{{ lista.items.length }}</b-badge></span></b-dropdown-item>
+				    <b-dropdown-divider></b-dropdown-divider>
+				    <b-dropdown-form v-bind:style="{width: '200px'}">
+				    	<b-input-group size="sm">
+				    		<loading v-if="newListLoading" text="" v-bind:wrapper=true />
+							<b-form-input placeholder="Listan nimi" v-model="newListName" v-on:keyup.enter="addNewList"></b-form-input>
+							<b-input-group-append>
+								<b-button size="sm" variant="success" v-on:click="addNewList" title="Tallenna"><i class="fas fa-check"></i></b-button>
+							</b-input-group-append>
+						</b-input-group>
+					</b-dropdown-form>
 				  </b-dropdown>
 		            </template>
 		        </div>
