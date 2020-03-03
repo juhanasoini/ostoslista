@@ -105,7 +105,10 @@ if( process.env.ENV === 'PROD' && process.env.DO_REDIRECT == "true" )
 //     next();
 // } )
 
-app.get('/', is_logged_handler, (req, res, next) => {
+app.get('/', (req, res, next) => {
+    if( !req.user )
+        return res.status(401).redirect('/login');
+    
     next();
 });
 
