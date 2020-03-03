@@ -1,7 +1,7 @@
 {
   "name": "Ostoslista",
   "short_name": "Ostoslista",
-  "start_url": "/login",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#272B30",
   "theme_color": "#272B30",
