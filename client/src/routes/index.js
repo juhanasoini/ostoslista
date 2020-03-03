@@ -26,10 +26,8 @@ let router = new Router({
 			component: shoppinglistapp,
 			beforeEnter: async (to, from, next) => {
 				let result = await userService.isLoggedIn();
-				if( result )
-				{
+				if( result  )
 					next();
-				}
 				else
 					next({ path: '/login' });
 			}

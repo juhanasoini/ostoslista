@@ -14,7 +14,7 @@ const app = express();
 require('./models/user.model');
 require('./models/shoppinglist.model');
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true,  useUnifiedTopology: true,  useFindAndModify: false  } || null);
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true,  useUnifiedTopology: true,  useFindAndModify: false, useCreateIndex: true } || null);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

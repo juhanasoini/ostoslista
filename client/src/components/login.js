@@ -50,7 +50,7 @@ export default Vue.component('Login', {
 			        	}
 			        })
 			        .then(res => {
-			            router.push( { name: "index"} );		                
+			            router.push( { name: "index", params: { success: true } } );		                
 			        })
 			        .catch( (err) => {
 			        	console.log(err)
