@@ -124,7 +124,7 @@ app.use( '/api' , ( req, res, next ) =>{
 
 if (process.env.ENV === 'PROD') 
 {
-  // app.use("/", expressStaticGzip( 'client/dist' ));
+  app.use("/", expressStaticGzip( 'client/dist' ));
 	app.use(express.static('client/dist'));
 	const path = require('path');
 	app.get('*', (req,res) => {
