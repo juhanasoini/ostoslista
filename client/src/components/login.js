@@ -16,6 +16,8 @@ export default Vue.component('Login', {
 	},
 	methods:{
 		validateForm: function( ) {
+			//Checks that input fields have input
+			//Returns false when input is not OK else true
 			let __ = this;
 			this.errors = [];
 			if( this.userName.trim() != '' && this.password.trim() != '' )
@@ -31,6 +33,8 @@ export default Vue.component('Login', {
 			return false;
 		},
 		async submitForm( e ){
+			//Submits user credentials to the backend if form is validated
+			//Shows errors if there are any
 			let __ = this;
 			__.loading = true;
 			if( this.validateForm() )
@@ -45,10 +49,6 @@ export default Vue.component('Login', {
 			            	password: __.password 
 						}
 					})
-					// await axios.post('/api/user/login', {
-			  //           userName: this.userName, 
-			  //           password: this.password 
-			  //       })
 			        .then( ( data ) => {
 			        	if( data.length && data[0].message != 'success' )
 			        	{

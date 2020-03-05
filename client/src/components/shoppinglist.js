@@ -1,6 +1,3 @@
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 import Vue from 'vue'
 import shoppinglistList from './shoppinglistList'
@@ -14,14 +11,14 @@ export default Vue.component('shoppinglist', {
 	},
 	data: function () {
 		return {
-			shoppingLists: [],
-			sharedShoppingLists: [],
-	  		shoppingList: null,
+			shoppingLists: [], //Users own lists
+			sharedShoppingLists: [], //Lists shared with current user
+	  		shoppingList: null, //Currently active list
             itemList: [],
             showNewListForm: false,
             newListName: '',
             newListLoading: false,
-            listType: 'normal'
+            listType: 'normal' //Not used
 		}
 	},
 	watch: {
@@ -40,17 +37,17 @@ export default Vue.component('shoppinglist', {
 				this.chooseList( this.shoppingList._id );
 	    }
 	},
-	created: function() {
-		this.$emit('List created');
-	},
 	methods: {
         handleItemAdd: function( item ) {
+        	//Method doesn't really do anything. Idea was to create a list to be used in a wordwheel
             if( this.itemList.includes( item.title ) )
             	return false;
 
             this.itemList.push( item.title );
         },
 		chooseList: function( listid ) {
+			//Method handles active list selection by listid param
+			//Checks owned lists first and then if not found checks shared lists
             let __ = this;
             let listFound = false;
 			__.shoppingLists.some( function( item, index ) {
@@ -77,17 +74,23 @@ export default Vue.component('shoppinglist', {
             });
 		},
 		toggleAddNewList: function() {
-			this.showNewListForm = !this.showNewListForm;
-			if( !this.showNewListForm )
-				this.newListName = '';
+			//Method toggles form visibility for adding a new list
+			//Also resets newListName param so the input is empty when form is visible again
+			let __ = this;
+			__.showNewListForm = !__.showNewListForm;
+			if( !__.showNewListForm )
+				__.newListName = '';
 		},
 		alterNewListName: function( newName )
 		{
-			//This is stupid
+			//Method is a helper between two components that have a form to create new list
+			//This is a stupid method!!
 			let __ = this;
 			__.newListName = newName;
 		},
 		addNewList: async function( event ) {
+			//Saves a new list to the database, appends it to the users lists and makes it the active list
+			//Method is called from a child component
 			event.preventDefault();
 			let __ = this;
         	if( __.newListName.trim() == '' )
@@ -110,6 +113,9 @@ export default Vue.component('shoppinglist', {
 		},
 		removeList: function( listID )
 		{
+			//Removes a list from the list array 
+			//and calls chooseList to select another list to be active
+			//if there are lists left
 			let __ = this;
 			let index = -1;
 			__.shoppingLists.forEach( function( e, i ){
@@ -133,6 +139,7 @@ export default Vue.component('shoppinglist', {
   				<shoppinglistList 
   					v-bind:list=shoppingList 
   					v-bind:lists=shoppingLists 
+  					v-bind:shared_lists=sharedShoppingLists 
   					v-bind:newListLoading=newListLoading 
   					@alter-newlistname="alterNewListName"
   					@add-list="addNewList" 
@@ -145,7 +152,9 @@ export default Vue.component('shoppinglist', {
 					<b-list-group class="shoppinglist-user-lists">
 					  <b-list-group-item v-on:click="chooseList( list._id )" class="d-flex justify-content-between align-items-center" v-for="(list, index) in shoppingLists" v-bind:key="list.id" v-bind:class="{ 'bg-warning text-light': list._id==shoppingList._id }">
 					    <a>{{list.name}}</a>
-					    <b-badge v-if="list.items" class="ml-3" variant="primary" pill>{{ list.items.length }}</b-badge>
+					    <span>
+					    <b-badge v-if="list.shared_with.length > 0" class="ml-3" variant="alert" pill title="Olet jakanut tämän listan"><i class="fas fa-share-square"></i></b-badge><b-badge v-if="list.items" variant="primary" pill>{{ list.items.length }}</b-badge>
+					    </span>
 					  </b-list-group-item>
 					  <b-list-group-item v-on:click="chooseList( list._id )" class="d-flex justify-content-between align-items-center" v-for="(list, index) in sharedShoppingLists" v-bind:key="list.id" v-bind:class="{ 'bg-warning text-light': list._id==shoppingList._id }">
 					    <a>{{list.name}}</a>

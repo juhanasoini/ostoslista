@@ -1,5 +1,7 @@
 import Vue from 'vue'
 
+//Single list item
+
 export default  Vue.component('shoppinglistListItem', {
 	props: ['data', 'existsID'],
 	data: function () {
@@ -12,6 +14,7 @@ export default  Vue.component('shoppinglistListItem', {
 		this.$emit('created');
 	},
 	computed: {
+		//Insert classes to current item based on it's data
 		insertClasses: function() {
 			return {
 				'done': this.data.done,
@@ -24,6 +27,8 @@ export default  Vue.component('shoppinglistListItem', {
 	watch: {
 		existsID: function( newbie, oldie )
 		{
+			//If user tries to add a new item that already exists
+			//this signals the user that HEY I'M HERE ALREADY
 			this.informExists = this.data._id == newbie;
 			if( this.informExists )
 			{
@@ -37,9 +42,11 @@ export default  Vue.component('shoppinglistListItem', {
 	},
 	methods: {
 		removeItem (event) {
+			//Sends a signal up the component tree to remove this item from the list
 			this.$emit('remove-list-item', this.data)
 		},
 		toggleDone (event) {
+			//Sets current item as done and sends a signal up the ladder to update item status
 			this.data.done = !this.data.done;
 
 			this.$emit('item-done' );

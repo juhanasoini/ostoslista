@@ -4,7 +4,7 @@ import shoppinglistListItem from './shoppinglistListItem'
 import axios from 'axios'
 
 export default  Vue.component('shoppinglistList', {
-	props: ['list', 'lists', 'newListLoading'],
+	props: ['list', 'lists', 'shared_lists', 'newListLoading'],
 	data: function () {
 		return {
 	  		message: '',
@@ -20,20 +20,17 @@ export default  Vue.component('shoppinglistList', {
 
 		}
 	},
-	created: function() {
-		this.$emit('List-list created');
-	},
 	watch: {
 	    list(newValue, oldValue) {
 	    	let __ = this;
-	    	__.edit = false;
-	    	__.newListName = '';
-	    	__.prevName = '';
 	    	__.toggleRemoveAllDone();
 	    }
 	},
 	methods: {
 		add: function( event ) {
+			//Adds a new item to the list
+			//Checks first if the new item already exists on the list
+			//If it exists, this returns false
 			event.preventDefault();
 
 			let itemTitle = this.message.trim();
@@ -61,6 +58,8 @@ export default  Vue.component('shoppinglistList', {
 			this.$emit('add-item', item );
 		},
 		removeItem: async function( item ) {
+			//Removes a single item from the list array
+			//and from the database
             let key = 'id';
             let index = -1;
             if( typeof item._id != 'undefined' ) 
@@ -90,6 +89,8 @@ export default  Vue.component('shoppinglistList', {
         },
         shareList: function()
         {
+        	//Shares a list
+        	//Calls for a method that updates the lists shared attribute in the database
         	let __ = this;
 
         	if( __.shareEmail.trim() == '' )
@@ -114,12 +115,14 @@ export default  Vue.component('shoppinglistList', {
 
         },
         toggleRemoveAllDone: function(){
+        	//Toggles activity for the button that is used to remove items that are marked done
 			this.allRemoveDisabled = true;
         	const assertOneDone = ( element ) => element.done === true;
 			if( this.list.items.some( assertOneDone ) )
 				this.allRemoveDisabled = false;
         },
         removeDone: async function() {
+        	//Remove items that are marked as done from the list array and from the database
         	let __ = this;
         	this.list.items.forEach( function( element, i ){
 
@@ -133,7 +136,6 @@ export default  Vue.component('shoppinglistList', {
 
 			await this.updateList()
 			.then( res => {
-				console.log( res ) 
 				__.toggleRemoveAllDone()
 			})
 			.catch( err => {
@@ -141,6 +143,7 @@ export default  Vue.component('shoppinglistList', {
         	} );
         },
         toggleEdit: function( event ) {
+        	//Toggles between list items view and list edit view
 			event.preventDefault();
 			let __ = this;
 			__.edit = !__.edit;
@@ -156,6 +159,8 @@ export default  Vue.component('shoppinglistList', {
 			}
         },
         removeList: async function( event ) {
+        	//Removes a list from the database
+        	//Emits an event to the parent component
 			event.preventDefault();
 			let __ = this;
 			let listID = __.list._id;
@@ -179,11 +184,12 @@ export default  Vue.component('shoppinglistList', {
 			}
         },
         updateList: async function() {
+        	//Helper method to do the actual list update to the database
         	let __ = this;
-
         	return await axios.put( '/api/list/items', __.list );
         },
         updateListName:  async function( event ) {
+        	//Updates list's name locally and to the database
         	event.preventDefault();
         	let __ = this;
         	if( __.newListName.trim() == '' )
@@ -191,6 +197,7 @@ export default  Vue.component('shoppinglistList', {
         	await axios.put( '/api/list/name', {_id: __.list._id, name: __.newListName} )
         	.then( res => {
         		Vue.set( __.list, 'name', res.data.name );
+        		Vue.set( __, 'prevName', res.data.name );
         	} )
         	.catch( err => {
         		if( err.response.status == 401 )
@@ -199,6 +206,7 @@ export default  Vue.component('shoppinglistList', {
         	} );
         },
 		newList: async function( event ) {
+			//This calls the parent component to create a new list with the name 
 			event.preventDefault();
 			let __ = this;
 			this.$emit( 'add-list', event );
@@ -216,9 +224,20 @@ export default  Vue.component('shoppinglistList', {
 				    <template v-slot:button-content>
 				      <i class="fas fa-ellipsis-v"></i>
 				    </template>
-				    <b-dropdown-item-button variant="success" class="text-center" v-on:click="toggleEdit" title="Muokkaa listaa" size="sm"><i class="fas fa-edit"></i></b-dropdown-item-button>
+				    <b-dropdown-item-button v-if="!list.is_shared" variant="success" class="text-center" v-on:click="toggleEdit" title="Muokkaa listaa" size="sm"><i class="fas fa-edit"></i></b-dropdown-item-button>
 				    <b-dropdown-divider></b-dropdown-divider>
-				    <b-dropdown-item v-for="(lista, index) in lists" v-bind:key="lista.id" @click="$emit('change-list', lista._id)" v-bind:class="{ 'bg-warning text-light': lista._id==list._id }"><span class="d-block position-relative">{{lista.name}}<b-badge v-if="list.items" class="ml-3 position-absolute" v-bind:style="{right: '0', top: '4px'}"variant="primary" pill>{{ lista.items.length }}</b-badge></span></b-dropdown-item>
+				    <b-dropdown-item v-for="(lista, index) in lists" v-bind:key="lista.id" @click="$emit('change-list', lista._id)" v-bind:class="{ 'bg-warning text-light': lista._id==list._id }">
+				    	<span>{{lista.name}}</span>
+			    		<span class="float-right">
+					    	<b-badge v-if="lista.shared_with.length > 0" class="ml-3" variant="alert" pill title="Olet jakanut tämän listan"><i class="fas fa-share-square"></i></b-badge><b-badge v-if="lista.items" variant="primary" pill>{{ lista.items.length }}</b-badge>
+					    </span>
+				    </b-dropdown-item>
+				    <b-dropdown-item v-for="(shared, index) in shared_lists" v-bind:key="shared.id" @click="$emit('change-list', shared._id)" v-bind:class="{ 'bg-warning text-light': shared._id==list._id }">
+				    	<span>{{shared.name}}</span>
+			    		<span class="float-right">
+					    	<b-badge class="ml-3" variant="alert" pill title="Tämä lista on jaettu kanssasi"><i class="fas fa-share-square fa-flip-horizontal"></i></b-badge><b-badge v-if="shared.items" variant="primary" pill>{{ shared.items.length }}</b-badge>
+					    </span>
+				    </b-dropdown-item>
 				    <b-dropdown-divider></b-dropdown-divider>
 				    <b-dropdown-form v-bind:style="{width: '200px'}">
 				    	<b-input-group size="sm">

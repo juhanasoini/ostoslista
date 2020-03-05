@@ -2,6 +2,7 @@ require('dotenv').config();
 //https://medium.com/@basics.aki/step-wise-tutorial-for-node-js-authentication-using-passport-js-and-jwt-using-apis-cfbf274ae522
 const PORT = process.env.ENV === 'PROD' ? process.env.PORT : process.env.DEV_PORT || 8001;
 const express = require('express');
+const expressStaticGzip = require("express-static-gzip");
 const session = require('express-session');
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
@@ -123,6 +124,7 @@ app.use( '/api' , ( req, res, next ) =>{
 
 if (process.env.ENV === 'PROD') 
 {
+  // app.use("/", expressStaticGzip( 'client/dist' ));
 	app.use(express.static('client/dist'));
 	const path = require('path');
 	app.get('*', (req,res) => {

@@ -3,7 +3,6 @@ const userModel = mongoose.model('User');
 const listModel = mongoose.model('ShoppingList');
 
 module.exports.userRegister = async ( req, res, next ) => {
-	// await sleep(2000);
 	let user = new userModel( {
 		username: req.body.username,
 		email: req.body.email
@@ -30,14 +29,6 @@ module.exports.userRegister = async ( req, res, next ) => {
 
 module.exports.currentUser = ( req, res, next ) => {
 	let id = req.user._id;
-	// userModel.findById( id )
-	// 	.select('username email lists -_id')
-	// 	.populate('lists')
-	// 	.populate('lists.shared_with')
-	// 	.then( result => {
-	// 		return res.status( 200 ).json(result);
-	// 	} 
-	// );
 
 	userModel.findById( id )
 	.populate( {
@@ -53,20 +44,5 @@ module.exports.currentUser = ( req, res, next ) => {
 	.select('username email lists')
 	.then( result => {
 		return res.status( 200 ).json(result);
-	});
-
-// 	userModel.findById( id )
-// 		.select('username email lists -_id')
-// 		.populate('lists')
-// 		.exec(function (err, user) {
-// 			if (err) throw err;
-// console.log( user );
-// 			userModel.populate( user, { path: 'lists.shared_with' } )
-// 			.then( result => {
-// 					return res.status( 200 ).json(result);
-// 			});
-// 		});
-		 
-		 
-	
+	});	
 }

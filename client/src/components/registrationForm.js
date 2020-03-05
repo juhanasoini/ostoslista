@@ -19,6 +19,10 @@ export default Vue.component('registrationForm', {
 	},
 	methods:{
 		validateForm: function( ) {
+			//Validates user submitted data
+			//Email is validated via HTML5 native validation
+			//Shows errors if there are any
+			//Returns true if data is valid
 			this.errors = [];
 			this.errorFields = [];
 			
@@ -63,17 +67,19 @@ export default Vue.component('registrationForm', {
 			return this.errors.length == 0;
 		},
 		async submitForm( e ){
+			// Posts user entered data to the backend 
+			// shows errors if there are any
 			let __ = this;
 			__.loading = true;
-			if( this.validateForm() )
+			if( __.validateForm() )
 			{
 				try {
 					let response = await fetch('/api/user/register', {
 			            method: 'POST',
 			            body: JSON.stringify( {
-			            	username: this.username, 
-			            	password: this.password, 
-			            	email: this.email 
+			            	username: __.username, 
+			            	password: __.password, 
+			            	email: __.email 
 			            }),
 			            headers: {
 			                'Content-Type': 'application/json'
@@ -89,7 +95,7 @@ export default Vue.component('registrationForm', {
 			        	});
 			        }
 			        else
-			        	this.phase = 'success';
+			        	__.phase = 'success';
 
 				} catch( error ){
 					console.error( error );

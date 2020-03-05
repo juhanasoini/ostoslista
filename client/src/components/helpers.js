@@ -1,5 +1,7 @@
 import Vue from 'vue'
 
+//Small components to help with small stuff
+
 export const loading = Vue.component('loading', {
 	props: ['text', 'wrapper'],
 	template: `<div class="loader-container" v-bind:class="{ curtain: wrapper }"><div class="loader-content"><i class="fas fa-fan fa-spin fa-3x fa-fw"></i> <span>{{text}}</span></div></div>`
