@@ -63,7 +63,6 @@ UserSchema.set('toJSON', {
 				el.is_shared = true;
 			} );
 		}
-		console.log(ret)
 	} 
 });
 UserSchema.set('toObject', { virtuals: true });

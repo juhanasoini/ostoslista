@@ -29,6 +29,7 @@ export default  Vue.component('shoppinglistList', {
 	    	__.edit = false;
 	    	__.newListName = '';
 	    	__.prevName = '';
+	    	__.toggleRemoveAllDone();
 	    }
 	},
 	methods: {
@@ -233,7 +234,7 @@ export default  Vue.component('shoppinglistList', {
 		        </div>
 		        <div class="card-body">
 		    		<loading v-if="!list" text="Lataillaan" v-bind:wrapper=true />
-		            <ol class="shoppinglist-list" v-if="list.items.length > 0">
+		            <ol class="shoppinglist-list" v-if="list.items && list.items.length > 0">
 		                <shoppinglistListItem 
 		                	v-for="item in list.items" 
 		                	v-bind:key=item.uniqid 

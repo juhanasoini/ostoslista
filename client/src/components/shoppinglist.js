@@ -56,7 +56,6 @@ export default Vue.component('shoppinglist', {
 			__.shoppingLists.some( function( item, index ) {
                 if( item._id == listid )
                 {
-                    // __.shoppingList = __.shoppingLists[index];
                     Vue.set( __, 'shoppingList', __.shoppingLists[index] );
                     listFound = true;
                     __.listType = 'normal'
@@ -70,7 +69,6 @@ export default Vue.component('shoppinglist', {
             __.sharedShoppingLists.some( function( item, index ) {
                 if( item._id == listid )
                 {
-                    // __.shoppingList = __.sharedShoppingLists[index];
                     Vue.set( __, 'shoppingList', __.sharedShoppingLists[index] );
                     listFound = true;
                     __.listType = 'shared'
@@ -128,7 +126,6 @@ export default Vue.component('shoppinglist', {
 					__.shoppingList = null;
 			}
 		}
-        
     },
   	template: `
   		<div class="row">

@@ -77,13 +77,13 @@ passport.use( new LocalStrategy(
     }
 ));
 passport.serializeUser(function(user, done) {
-  console.log( user );
+  // console.log( user );
   done(null, user._id);
 });
 
 passport.deserializeUser(function(id, done) {
   userModel.findById(id, function(err, user) {
-    console.log( user );
+    // console.log( user );
     done(err, user);
   });
 });
