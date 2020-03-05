@@ -4,7 +4,7 @@ import shoppinglistListItem from './shoppinglistListItem'
 import axios from 'axios'
 
 export default  Vue.component('shoppinglistList', {
-	props: ['list', 'number', 'lists'],
+	props: ['list', 'lists', 'newListLoading'],
 	data: function () {
 		return {
 	  		message: '',
@@ -13,9 +13,11 @@ export default  Vue.component('shoppinglistList', {
 	  		nameUpdated: false,
 	  		allRemoveDisabled: true,
 	  		existsID: null,
+	  		loading: false,
+	  		newName: '',
 	  		newListName: '',
-	  		newListLoading: false,
-	  		loading: false
+	  		shareEmail: ''
+
 		}
 	},
 	created: function() {
@@ -85,6 +87,31 @@ export default  Vue.component('shoppinglistList', {
 
             return false;
         },
+        shareList: function()
+        {
+        	let __ = this;
+
+        	if( __.shareEmail.trim() == '' )
+        		return false;
+
+    		this.updateShared( __.shareEmail )
+    		.then( res => {    			
+    			Vue.set( __.list, 'shared_with', res.data.shared_with );
+			})
+			.catch( err => {
+        		console.error( err );
+        	} );
+        	
+
+        	__.shareEmail = '';
+        },
+        updateShared: async function( email )
+        {
+        	let __ = this;
+
+        	return await axios.put( '/api/list/shared', {email: email, list: __.list._id } );
+
+        },
         toggleRemoveAllDone: function(){
 			this.allRemoveDisabled = true;
         	const assertOneDone = ( element ) => element.done === true;
@@ -145,7 +172,6 @@ export default  Vue.component('shoppinglistList', {
 	        		if( err.response.status == 401 )
 	        			return this.$router.push( { name: "login"} );
 
-        		console.log( err.response );
 	        		console.error( err );
 	        		__.loading = false;
 	        	} );
@@ -157,8 +183,8 @@ export default  Vue.component('shoppinglistList', {
         	return await axios.put( '/api/list/items', __.list );
         },
         updateListName:  async function( event ) {
-        	let __ = this;
         	event.preventDefault();
+        	let __ = this;
         	if( __.newListName.trim() == '' )
         		return false;
         	await axios.put( '/api/list/name', {_id: __.list._id, name: __.newListName} )
@@ -171,26 +197,11 @@ export default  Vue.component('shoppinglistList', {
         		console.error( err );
         	} );
         },
-		addNewList: async function( event ) {
+		newList: async function( event ) {
 			event.preventDefault();
 			let __ = this;
-        	if( __.newListName.trim() == '' )
-        		return false;
-
-        	__.newListLoading = true;
-        	await axios.post( '/api/list', {name: this.newListName} )
-        	.then( list => {
-        		__.newListName = '';
-        		// __.shoppingLists.push( list.data );
-
-        		// __.chooseList( list.data._id );
-
-        		__.newListLoading = false;
-        	} )
-        	.catch( err => {
-        		console.error( err );
-        		__.newListLoading = false;
-        	} );
+			this.$emit( 'add-list', event );
+			__.newName = '';
 		}
 	},
   	template: `
@@ -199,7 +210,7 @@ export default  Vue.component('shoppinglistList', {
 		        <div class="card-header">
 		            <template v-if="list">
 		            {{list.name}}
-		            <b-button class="ml-2 btn-sm btn-success float-right d-none d-lg-block" v-on:click="toggleEdit" title="Muokkaa listaa"><i class="fas fa-edit"></i></b-button>
+		            <b-button v-if="!list.is_shared" class="ml-2 btn-sm btn-success float-right d-none d-lg-block" v-on:click="toggleEdit" title="Muokkaa listaa"><i class="fas fa-edit"></i></b-button>
 		        	<b-dropdown class="float-right d-lg-none" variant="primary" size="sm" no-caret right>
 				    <template v-slot:button-content>
 				      <i class="fas fa-ellipsis-v"></i>
@@ -211,9 +222,9 @@ export default  Vue.component('shoppinglistList', {
 				    <b-dropdown-form v-bind:style="{width: '200px'}">
 				    	<b-input-group size="sm">
 				    		<loading v-if="newListLoading" text="" v-bind:wrapper=true />
-							<b-form-input placeholder="Listan nimi" v-model="newListName" v-on:keyup.enter="addNewList"></b-form-input>
+							<b-form-input placeholder="Uusi lista" v-bind:value="newName" v-on:input="$emit('alter-newlistname', $event)" v-on:keyup.enter="newList"></b-form-input>
 							<b-input-group-append>
-								<b-button size="sm" variant="success" v-on:click="addNewList" title="Tallenna"><i class="fas fa-check"></i></b-button>
+								<b-button size="sm" variant="success" v-on:click="newList" title="Tallenna"><i class="fas fa-check"></i></b-button>
 							</b-input-group-append>
 						</b-input-group>
 					</b-dropdown-form>
@@ -254,12 +265,20 @@ export default  Vue.component('shoppinglistList', {
 		        	<loading v-if="loading" text="" v-bind:wrapper=true />
 		        	<b-button class="ml-2 btn-sm" variant="danger" v-on:click="removeList" title="Sulje muokkaus"><i class="fas fa-trash-alt"></i> Poista lista</b-button>
 		        	<hr>
+		        	TODO: Jakotoiminnallisuus on kesken
 		        	<h4>Jaa lista</h4>
 		        	<small class="text-info mb-2 d-block">Voit jakaa listan sellaisen henkilön kanssa joka on myös rekisteröitynyt tähän palveluun</small>
-		        	<form class="form-inline">
-		        		<input class="form-control form-control-sm shoppinglist-input-auto" type="email" placeholder="Anna sähköpostiosoite">
-		            	<b-button class="ml-2 btn-sm" variant="success" title="Jaa lista"><i class="fas fa-share-square" ></i></b-button>
+		        	<form class="form-inline mb-3">
+		        		<input class="form-control form-control-sm shoppinglist-input-auto" v-model="shareEmail" type="email" placeholder="Anna sähköpostiosoite">
+		            	<b-button class="ml-2 btn-sm" variant="success" title="Jaa lista" v-on:click="shareList" ><i class="fas fa-share-square" ></i></b-button>
 		            </form>
+		            <div v-if="list.shared_with.length > 0">
+			            <p class="mb-1"><b>Lista jaettu seuraavien käyttäjien kanssa:</b></p>
+			            <ul class="pl-3">
+			            	<li v-for="(shared, index) in list.shared_with">{{shared.email}}</li>
+			            </ul>
+			            
+		            </div>
 		        </div>
 		        <div class="card-footer text-right">
 		        	<b-button class="ml-2 btn-sm" variant="warning" v-on:click="toggleEdit" title="Sulje muokkaus"><i class="fas fa-undo"></i></b-button>

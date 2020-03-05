@@ -77,11 +77,13 @@ passport.use( new LocalStrategy(
     }
 ));
 passport.serializeUser(function(user, done) {
+  console.log( user );
   done(null, user._id);
 });
 
 passport.deserializeUser(function(id, done) {
   userModel.findById(id, function(err, user) {
+    console.log( user );
     done(err, user);
   });
 });
@@ -97,25 +99,16 @@ if( process.env.ENV === 'PROD' && process.env.DO_REDIRECT == "true" )
 	});
 }
 
-// app.use( function( req, res, next){
-
-//     req.session.user = {
-//       id: '5e3abb1ddc3f52331d4303e2'
-//     }
-//     next();
-// } )
-
 app.get('/', (req, res, next) => {
     if( !req.user )
         return res.status(401).redirect('/login');
-    
+
     next();
 });
 
 app.use('/logout', (req, res, next) => {
     req.session.destroy();
     req.logout();
-    // next();
     return res.redirect('/login');
 });
 
@@ -126,7 +119,6 @@ app.use('/api', listRoutes);
 
 app.use( '/api' , ( req, res, next ) =>{
 	return res.status(404).end();
-  // return res.status(404).json( { 'error': true } );
 } );
 
 if (process.env.ENV === 'PROD') 

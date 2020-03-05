@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 const secret = process.env.SECRET;
 
 const { Schema } = mongoose;
+// require('./shoppinglist.model');
+// const listModel = mongoose.model('ShoppingList');
 
 const UserSchema = new Schema({
 	username: {
@@ -31,7 +33,40 @@ const UserSchema = new Schema({
 		type: mongoose.Schema.Types.ObjectId, 
 		ref: 'ShoppingList'
 	}]
-}, {timestamps: true});
+}, { timestamps: true });
+
+UserSchema.virtual('shared_lists', {
+	ref: 'ShoppingList', // The model to use
+	localField: '_id', // Find people where `localField`
+	foreignField: 'shared_with' // is equal to `foreignField`
+});
+
+// UserSchema.virtual('shared_lists').get( function() {
+// 	console.log( this._id );
+// 	return listModel.find({ shared_with: this._id} );
+// });
+
+UserSchema.set('toJSON', { 
+	virtuals: true,
+	transform: function(doc, ret) {
+		delete ret._id;
+		delete ret.id;
+		if( typeof ret.shared_lists !== 'undefined' )
+		{
+			ret.lists.forEach( function( el, i ){
+				el.is_shared = false;
+			});
+		}
+		if( typeof ret.shared_lists !== 'undefined' )
+		{
+			ret.shared_lists.forEach( function( el, i ){
+				el.is_shared = true;
+			} );
+		}
+		console.log(ret)
+	} 
+});
+UserSchema.set('toObject', { virtuals: true });
 
 UserSchema.plugin(uniqueValidator, { message: '{VALUE} on jo varattu' });
 

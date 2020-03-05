@@ -32,12 +32,46 @@ module.exports.newList = async function( req, res, next ){
 module.exports.updateList = function( req, res, next ){
 	let body = req.body;
 	try{
+		let currentUserID = req.user.id;
 		let list = listModel.findOneAndUpdate( { _id: body._id }, { items: body.items }, {new: true}, function( err, list ){
 			if( list == null )
 				res.status(400).end();
 			else
 				res.status(200).json( list );
 		} )
+	} catch( err ) {
+		console.error( err );
+	}
+
+	return res.status(200);
+}
+
+module.exports.updateShared = function( req, res, next ){
+	let body = req.body;
+	try{
+		userModel.findOne({ email: body.email }, function (err, user) {
+			if( user )
+			{
+				listModel.findById( body.list, function( err, list ){
+					if( list )
+					{
+						list.shared_with.push( user );
+						list.save(function (err, list) {
+							list.populate( {
+								path: 'shared_with',
+								'select': 'email -_id'
+							} )
+							.execPopulate()
+							.then( result => {
+									return res.status( 200 ).json(result);
+							});
+						});
+					}
+				});	
+			}
+			else
+				res.status(404).json( {'error': 'User not found'} );
+		});
 	} catch( err ) {
 		console.error( err );
 	}
@@ -64,9 +98,9 @@ module.exports.deleteList = async function( req, res, next ){
 	let params = req.params;
 	try{
 		let listID = params.listid;
-		let ownerID = req.user.id;
+		let currentUserID = req.user.id;
 		let list = await listModel.findById( listID );
-		if( list.owner == ownerID )
+		if( list.owner == currentUserID )
 		{
 			await userModel.findById( list.owner, function( err, user ){
 				if( err )

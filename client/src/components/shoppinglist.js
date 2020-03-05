@@ -9,19 +9,19 @@ import {loading} from './helpers'
 
 export default Vue.component('shoppinglist', {
 	props: {
-	    lists: Array
-
+	    lists: Array,
+	    shared_lists: Array
 	},
 	data: function () {
 		return {
-			shoppingLists: [
-			],
+			shoppingLists: [],
+			sharedShoppingLists: [],
 	  		shoppingList: null,
-            itemList: [
-            ],
+            itemList: [],
             showNewListForm: false,
             newListName: '',
-            newListLoading: false
+            newListLoading: false,
+            listType: 'normal'
 		}
 	},
 	watch: {
@@ -29,6 +29,15 @@ export default Vue.component('shoppinglist', {
 	    	this.shoppingLists = newValue;
 	    	if( this.shoppingList === null )
 				this.shoppingList = this.shoppingLists[0];
+			else
+				this.chooseList( this.shoppingList._id );
+	    },
+	    shared_lists(newValue, oldValue) {
+	    	this.sharedShoppingLists = newValue;
+	    	if( this.shoppingList === null )
+				this.shoppingList = this.sharedShoppingLists[0];
+			else
+				this.chooseList( this.shoppingList._id );
 	    }
 	},
 	created: function() {
@@ -43,10 +52,28 @@ export default Vue.component('shoppinglist', {
         },
 		chooseList: function( listid ) {
             let __ = this;
+            let listFound = false;
 			__.shoppingLists.some( function( item, index ) {
                 if( item._id == listid )
                 {
-                    __.shoppingList = __.shoppingLists[index];
+                    // __.shoppingList = __.shoppingLists[index];
+                    Vue.set( __, 'shoppingList', __.shoppingLists[index] );
+                    listFound = true;
+                    __.listType = 'normal'
+                    return true;
+                }
+            });
+
+			if( listFound )
+				return true;
+
+            __.sharedShoppingLists.some( function( item, index ) {
+                if( item._id == listid )
+                {
+                    // __.shoppingList = __.sharedShoppingLists[index];
+                    Vue.set( __, 'shoppingList', __.sharedShoppingLists[index] );
+                    listFound = true;
+                    __.listType = 'shared'
                     return true;
                 }
             });
@@ -56,6 +83,12 @@ export default Vue.component('shoppinglist', {
 			if( !this.showNewListForm )
 				this.newListName = '';
 		},
+		alterNewListName: function( newName )
+		{
+			//This is stupid
+			let __ = this;
+			__.newListName = newName;
+		},
 		addNewList: async function( event ) {
 			event.preventDefault();
 			let __ = this;
@@ -63,7 +96,7 @@ export default Vue.component('shoppinglist', {
         		return false;
 
         	__.newListLoading = true;
-        	await axios.post( '/api/list', {name: this.newListName} )
+        	await axios.post( '/api/list', {name: __.newListName} )
         	.then( list => {
         		__.shoppingLists.push( list.data );
         		__.toggleAddNewList();
@@ -100,7 +133,15 @@ export default Vue.component('shoppinglist', {
   	template: `
   		<div class="row">
   			<div class="col-sm-12 col-lg-6">
-  				<shoppinglistList v-bind:list=shoppingList v-bind:lists=shoppingLists @add-item="handleItemAdd" @list-removed="removeList"  @change-list="chooseList" />
+  				<shoppinglistList 
+  					v-bind:list=shoppingList 
+  					v-bind:lists=shoppingLists 
+  					v-bind:newListLoading=newListLoading 
+  					@alter-newlistname="alterNewListName"
+  					@add-list="addNewList" 
+  					@add-item="handleItemAdd" 
+  					@list-removed="removeList" 
+  					@change-list="chooseList" />
 			</div>
 			<div class="d-none d-lg-block col-sm-3">
 				<div>
@@ -108,6 +149,12 @@ export default Vue.component('shoppinglist', {
 					  <b-list-group-item v-on:click="chooseList( list._id )" class="d-flex justify-content-between align-items-center" v-for="(list, index) in shoppingLists" v-bind:key="list.id" v-bind:class="{ 'bg-warning text-light': list._id==shoppingList._id }">
 					    <a>{{list.name}}</a>
 					    <b-badge v-if="list.items" class="ml-3" variant="primary" pill>{{ list.items.length }}</b-badge>
+					  </b-list-group-item>
+					  <b-list-group-item v-on:click="chooseList( list._id )" class="d-flex justify-content-between align-items-center" v-for="(list, index) in sharedShoppingLists" v-bind:key="list.id" v-bind:class="{ 'bg-warning text-light': list._id==shoppingList._id }">
+					    <a>{{list.name}}</a>
+					    <span>
+					    <b-badge class="ml-3" variant="alert" pill title="Jaettu sinun kanssasi"><i class="fas fa-share-square fa-flip-horizontal"></i></b-badge><b-badge v-if="list.items" variant="primary" pill>{{ list.items.length }}</b-badge>
+					    </span>
 					  </b-list-group-item>
 					</b-list-group>
 					<div>

@@ -36,10 +36,19 @@ export default Vue.component('Login', {
 			if( this.validateForm() )
 			{
 				try {
-					await axios.post('/api/user/login', {
-			            userName: this.userName, 
-			            password: this.password 
-			        })
+					await axios({
+						url: '/api/user/login',
+						method: 'post',
+						withCredentials: true,
+						data: { 
+							userName: __.userName, 
+			            	password: __.password 
+						}
+					})
+					// await axios.post('/api/user/login', {
+			  //           userName: this.userName, 
+			  //           password: this.password 
+			  //       })
 			        .then( ( data ) => {
 			        	if( data.length && data[0].message != 'success' )
 			        	{
@@ -64,7 +73,8 @@ export default Vue.component('Login', {
 		}
 	},
 	template: `
-		<div class="d-flex align-items-center justify-content-center" style="height: 100vh">
+		<div class="d-flex align-items-center justify-content-center flex-column" style="height: 100vh">
+			<img src="img/icons/android-icon-144x144.png" />
         	<div className="flex-row">
         		<b-card header="Kirjaudu sisään" header-tag="h3" class="mx-3">
         			<errors v-bind:error=errors />

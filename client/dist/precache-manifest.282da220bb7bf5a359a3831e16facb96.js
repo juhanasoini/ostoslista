@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "d22f41999397bd67977f",
+    "revision": "b0e0b6d3cee327f51a75",
     "url": "/css/app.ebccec65.css"
   },
   {
@@ -48,12 +48,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/img/splashscreens/iphonexsmax_splash.png"
   },
   {
-    "revision": "3bccf5f2a1c3a5be2c947cef3a7edb63",
+    "revision": "4d2182538578ba7daab5d8e55709965d",
     "url": "/index.html"
   },
   {
-    "revision": "d22f41999397bd67977f",
-    "url": "/js/app.728c8d58.js"
+    "revision": "b0e0b6d3cee327f51a75",
+    "url": "/js/app.0040c78b.js"
   },
   {
     "revision": "a90cee20ab086382b4d8",

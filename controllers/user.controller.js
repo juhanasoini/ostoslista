@@ -30,11 +30,43 @@ module.exports.userRegister = async ( req, res, next ) => {
 
 module.exports.currentUser = ( req, res, next ) => {
 	let id = req.user._id;
+	// userModel.findById( id )
+	// 	.select('username email lists -_id')
+	// 	.populate('lists')
+	// 	.populate('lists.shared_with')
+	// 	.then( result => {
+	// 		return res.status( 200 ).json(result);
+	// 	} 
+	// );
+
 	userModel.findById( id )
-		.select('username email lists -_id')
-		.populate('lists')
-		.then( result => {
-			return res.status( 200 ).json(result);
-		} 
-	);
+	.populate( {
+		path: 'shared_lists'
+	})
+	.populate( {
+		path: 'lists',
+		populate: {
+			path: 'shared_with',
+			'select': 'email -_id'
+		}
+	})
+	.select('username email lists')
+	.then( result => {
+		return res.status( 200 ).json(result);
+	});
+
+// 	userModel.findById( id )
+// 		.select('username email lists -_id')
+// 		.populate('lists')
+// 		.exec(function (err, user) {
+// 			if (err) throw err;
+// console.log( user );
+// 			userModel.populate( user, { path: 'lists.shared_with' } )
+// 			.then( result => {
+// 					return res.status( 200 ).json(result);
+// 			});
+// 		});
+		 
+		 
+	
 }

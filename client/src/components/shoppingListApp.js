@@ -17,12 +17,14 @@ export default Vue.component('shoppinglistapp', {
             user: {
                 username: '',
                 email: '',
-                lists: []
+                lists: [],
+                timer: null
             }
         }
     },
     created: function() {
         this.getUserData();
+        this.timer = setInterval(this.getUserData, 10000)
     },
 
     methods: {
@@ -32,11 +34,15 @@ export default Vue.component('shoppinglistapp', {
             .then( function ( response ) {
                 __.user = response.data;
                 Vue.set( __.user, 'lists', response.data.lists );
+                Vue.set( __.user, 'shared_lists', response.data.shared_lists );
             })
             .catch( function( error ) {
                 console.log(error);
             })
         },
+    },
+    beforeDestroy () {
+      clearInterval(this.timer)
     },
 
 	template: `
@@ -61,7 +67,7 @@ export default Vue.component('shoppinglistapp', {
                 </div>
               </div>  
               
-              <shoppinglist v-bind:lists="user.lists" />
+              <shoppinglist v-bind:lists="user.lists" v-bind:shared_lists="user.shared_lists" />
                 
             </div>
         </div>
