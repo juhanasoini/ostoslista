@@ -3,6 +3,7 @@ require('dotenv').config();
 const PORT = process.env.ENV === 'PROD' ? process.env.PORT : process.env.DEV_PORT || 8001;
 const express = require('express');
 const expressStaticGzip = require("express-static-gzip");
+const sslRedirect = require('heroku-ssl-redirect');
 const session = require('express-session');
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose');
@@ -11,6 +12,9 @@ const {is_logged_handler} = require( './lib/isLoggedIn' );
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const app = express();
+
+// enable ssl redirect
+app.use(sslRedirect());
 
 require('./models/user.model');
 require('./models/shoppinglist.model');
