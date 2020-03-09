@@ -106,3 +106,8 @@ button:hover, button:active, button:focus {
 .shoppinglist-input-auto {
 	width: auto !important;
 }
+
+
+.text-light .dropdown-item {
+	color: #fff;
+}
