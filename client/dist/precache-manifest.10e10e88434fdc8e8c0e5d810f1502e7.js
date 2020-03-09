@@ -48,7 +48,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/img/splashscreens/iphonexsmax_splash.png"
   },
   {
-    "revision": "6abfa7af461a5cfd7067bb7b161d5058",
+    "revision": "9109c196144f1621f29367469a312602",
     "url": "/index.html"
   },
   {
