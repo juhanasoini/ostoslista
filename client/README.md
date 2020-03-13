@@ -1,24 +1,12 @@
-# client
+# Sovellus erilaisten listojen luomiseen
+* Käyttää MongoDB -tietokantaa datan tallennukseen.
+* Vaatii rekisteröitymisen
+* Sähköposti oltava oikeaa muotoa mutta ei tarvitse olla toimiva
+* Käyttäjä voi luoda määräämättömän määrän listoja, poistaa ja nimetä uudelleen omistamiaan listoja, jakaa listoja muille ja tietenkin lisätä listoille kohtia.
+* Kohtia voi merkitä valmiiksi, palauttaa ei-valmiiksi, poistaa. 
+* Valmiiksi merkityt kohdat voi poistaa massana
+* Listan jakaminen onnistuu sähköpostiosoitteen perusteella toiselle jo rekisteröityneelle tilille
+* Listojen sisältö päivittyy 10 sekunnin välein
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+https://js-shoppinglist.herokuapp.com/
+HUOM. Herokun ilmaiset palvelut ovat horroksessa jos palvelimelle ei tule pyyntöjä. Ensimmäinen lataus saattaa kestää pitkään.

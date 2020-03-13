@@ -1,7 +1,7 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "170bbb5bf38a00fdde45",
-    "url": "/css/app.8886dadf.css"
+    "revision": "f9a4138ba3e78402ef26",
+    "url": "/css/app.44c3933b.css"
   },
   {
     "revision": "a90cee20ab086382b4d8",
@@ -48,19 +48,23 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/img/splashscreens/iphonexsmax_splash.png"
   },
   {
-    "revision": "9109c196144f1621f29367469a312602",
+    "revision": "9f53450f5cb5a4cef320255f11f64ae5",
     "url": "/index.html"
   },
   {
-    "revision": "170bbb5bf38a00fdde45",
-    "url": "/js/app.1f531948.js"
+    "revision": "98fb87f7e8e0701a3167e6a507f1f15e",
+    "url": "/javascript/offline.js"
+  },
+  {
+    "revision": "f9a4138ba3e78402ef26",
+    "url": "/js/app.e76e3a27.js"
   },
   {
     "revision": "a90cee20ab086382b4d8",
     "url": "/js/chunk-vendors.5020fa3d.js"
   },
   {
-    "revision": "6771304467a44c5377e133d57c85ab08",
+    "revision": "5cb6ab33beba2d91beceba5c8cc9ee8e",
     "url": "/manifest.json"
   },
   {

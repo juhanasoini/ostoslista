@@ -285,7 +285,6 @@ export default  Vue.component('shoppinglistList', {
 		        	<loading v-if="loading" text="" v-bind:wrapper=true />
 		        	<b-button class="ml-2 btn-sm" variant="danger" v-on:click="removeList" title="Sulje muokkaus"><i class="fas fa-trash-alt"></i> Poista lista</b-button>
 		        	<hr>
-		        	TODO: Jakotoiminnallisuus on kesken
 		        	<h4>Jaa lista</h4>
 		        	<small class="text-info mb-2 d-block">Voit jakaa listan sellaisen henkilön kanssa joka on myös rekisteröitynyt tähän palveluun</small>
 		        	<form class="form-inline mb-3">

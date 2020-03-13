@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '../assets/stylesheets/theme.min.css'
 import '../assets/stylesheets/styles.css'
+import '../assets/stylesheets/offline-theme-default.css'
 
 Vue.use(BootstrapVue); 
 
@@ -53,15 +54,14 @@ export default Vue.component('shoppinglistapp', {
             <div class="row">
                 <div class="col-sm-12">
                 	<b-navbar class="mb-1 info-color" type="dark">
-                      <b-navbar-brand href="#">Ostoslista<sup>TM</sup></b-navbar-brand>
+                      <b-navbar-brand href="#">ListaAPP<sup>TM</sup></b-navbar-brand>
                       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
                       <b-collapse id="nav-collapse" is-nav>
                       	<b-navbar-nav class="ml-auto">
 					      	<b-nav-item-dropdown right>
 					      		<template  v-if="user" v-slot:button-content>
 									<i class="fas fa-user"></i> {{user.username}}
-								</template>	
-								<b-dropdown-item href="#">My account</b-dropdown-item>
+								</template>
 								<b-dropdown-item href="/logout">Kirjaudu ulos</b-dropdown-item>
 					        </b-nav-item-dropdown>
 				      	</b-navbar-nav>
