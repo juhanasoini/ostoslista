@@ -8,6 +8,3 @@
 * Listan jakaminen onnistuu sähköpostiosoitteen perusteella toiselle jo rekisteröityneelle tilille
 * Listojen sisältö päivittyy 10 sekunnin välein
 * Sovellus noudattaa PWA käytänteitä ja on siten asennettavissa puhelimeen natiiviapin "kaltaiseksi"
-
-https://js-shoppinglist.herokuapp.com/
-HUOM. Herokun ilmaiset palvelut ovat horroksessa jos palvelimelle ei tule pyyntöjä. Ensimmäinen lataus saattaa kestää pitkään.
